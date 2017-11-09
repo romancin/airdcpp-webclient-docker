@@ -14,6 +14,8 @@ Before running container ONLY FOR THE FIRST TIME:
     wget https://raw.githubusercontent.com/romancin/airdcpp-webclient-docker/master/.airdcpp/DCPlusPlus.xml
     wget https://raw.githubusercontent.com/romancin/airdcpp-webclient-docker/master/.airdcpp/WebServer.xml
 
+To create and run Container:
+
     docker run -d --name airdcpp -p 80:5600 \
     -v /local/dir/to/store/config:/.airdcpp \
     -v /local/dir/to/store/downloads:/Downloads \
