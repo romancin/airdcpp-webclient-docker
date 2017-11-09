@@ -9,9 +9,10 @@ Run the application
 First decide and create a directory where you want to save the AirDC++ Configuration. For the moment, you have to download default config files manually. This would be fixed in future releases.
 
 Before running container ONLY FOR THE FIRST TIME:
-cd /local/dir/to/store/config
-wget https://raw.githubusercontent.com/romancin/airdcpp-webclient-docker/master/.airdcpp/DCPlusPlus.xml
-wget https://raw.githubusercontent.com/romancin/airdcpp-webclient-docker/master/.airdcpp/WebServer.xml
+
+    cd /local/dir/to/store/config
+    wget https://raw.githubusercontent.com/romancin/airdcpp-webclient-docker/master/.airdcpp/DCPlusPlus.xml
+    wget https://raw.githubusercontent.com/romancin/airdcpp-webclient-docker/master/.airdcpp/WebServer.xml
 
     docker run -d --name airdcpp -p 80:5600 \
     -v /local/dir/to/store/config:/.airdcpp \
