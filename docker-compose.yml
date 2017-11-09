@@ -2,9 +2,11 @@
 version: '2.1'
 services:
   airdcpp:
-    image: gangefors/airdcpp-webclient
+    image: romancin/airdcpp-webclient
     volumes:
-      - airdcpp:/.airdcpp
+      - /local/dir/to/store/config:/.airdcpp
+      - /local/dir/to/store/downloads:/Downloads
+      - /local/dir/to/share:/Share
     user: ${UID:-0}:${GID:-0}
     hostname: airdcpp
     ports:
@@ -13,7 +15,3 @@ services:
       - ${TCP_PORT:-21248}:${TCP_PORT:-21248}
       - ${UDP_PORT:-21248}:${UDP_PORT:-21248}/udp
       - ${TLS_PORT:-21249}:${TLS_PORT:-21249}
-
-volumes:
-  airdcpp:
-    driver: local

@@ -1,35 +1,29 @@
 AirDC++ Web Client Docker image
 ===============================
 
-You must have proper knowledge of [Docker] to use this image.
+You must have proper knowledge of [Docker] to use this image. Based on gangefors image.
 
 Run the application
 -------------------
 
-    docker volume create --name airdcpp
-    docker run -d --name airdcpp -p 80:5600 -v airdcpp:/.airdcpp \
-        gangefors/airdcpp-webclient
+First decide and create a directory where you want to save the AirDC++ Configuration. For the moment, you have to download default config files manually. This would be fixed in future releases.
+
+Before running container ONLY FOR THE FIRST TIME:
+cd /local/dir/to/store/config
+wget https://raw.githubusercontent.com/romancin/airdcpp-webclient-docker/master/.airdcpp/DCPlusPlus.xml
+wget https://raw.githubusercontent.com/romancin/airdcpp-webclient-docker/master/.airdcpp/WebServer.xml
+
+    docker run -d --name airdcpp -p 80:5600 \
+    -v /local/dir/to/store/config:/.airdcpp \
+    -v /local/dir/to/store/downloads:/Downloads \
+    -v /local/dir/to/share:/Share \
+    romancin/airdcpp-webclient
 
 The web UI will be available on [http://localhost].
 If you want to run the application on any other port than 80, just update
 the `-p` option in the command, e.g `-p 5600:5600` to bind to port 5600.
 
 Username / password for the default admin account is: `admin` / `password`
-
-_Explanation_
-
-    docker volume create --name airdcpp
-
-This command creates a named volume that will store the application settings.
-_Run the `volume create` command only once._
-
-    docker run -d --name airdcpp -p 80:5600 -v airdcpp:/.airdcpp \ 
-        gangefors/airdcpp-webclient
-
-This command starts a container using the default settings built into the
-image, binding the application to port 80 (default http port) so it's easily
-available on [http://localhost].
-
 
 Run as non-privileged user
 --------------------------
@@ -38,15 +32,21 @@ If you'd like to run in a non-privileged container you can do that as well.
 It might even be preferable since then you get to decide who owns the
 downloaded files.
 
-    docker run -d --name airdcpp -p 80:5600 -v airdcpp:/.airdcpp \
-        -u $(id -u):$(id -g) gangefors/airdcpp-webclient
+    docker run -d --name airdcpp -p 80:5600 \
+    -v /local/dir/to/store/config:/.airdcpp \
+    -v /local/dir/to/store/downloads:/Downloads \
+    -v /local/dir/to/share:/Share \
+    -u $(id -u):$(id -g) \
+    romancin/airdcpp-webclient
 
 _NOTE_
 If you already have run the container as root, the files in the volume might
 be owned by root. Fix that by `chown`ing the files to the user you run as.
 
-    docker run --rm -v airdcpp:/.airdcpp ubuntu:16.04 \
-        chown -R $(id -u):$(id -g) /.airdcpp
+    docker run --rm \
+    -v /local/dir/to/store/config:/.airdcpp \
+    ubuntu:16.04 \
+    chown -R $(id -u):$(id -g) /.airdcpp
 
 
 docker-compose
@@ -67,7 +67,7 @@ by setting these environment variables before running `docker-compose up -d`.
   Container is started with this user id. Defaults to 0 (root).
   Usually you want this to be $(id -u).
 
-- `GID`
+- `GID`1G
 
   Container is started with this group id. Defaults to 0 (root).
   Usually you want this to be $(id -g).
@@ -145,7 +145,7 @@ Add/modify admin users
 To add/modify _adminitrative_ users to the web interface, run the following.
 
     docker stop airdcpp
-    docker run --rm -it --volumes-from airdcpp gangefors/airdcpp-webclient --add-user
+    docker run --rm -it --volumes-from airdcpp romancin/airdcpp-webclient --add-user
     docker start airdcpp
 
 _NOTE_ You must stop the webclient application container before running this
@@ -162,10 +162,13 @@ Upgrade
 
 Example:
 
-    docker pull gangefors/docker-airdcpp-webclient
+    docker pull romancin/docker-airdcpp-webclient
     docker rm -f airdcpp
-    docker run -d --name airdcpp -p 80:5600 -v airdcpp:/.airdcpp \
-        gangefors/docker-airdcpp-webclient
+    docker run -d --name airdcpp -p 80:5600 \
+    -v /local/dir/to/store/config:/.airdcpp \
+    -v /local/dir/to/store/downloads:/Downloads \
+    -v /local/dir/to/share:/Share \
+    romancin/airdcpp-webclient
 
 
 Enable HTTPS
